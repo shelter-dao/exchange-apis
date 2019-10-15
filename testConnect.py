@@ -6,6 +6,10 @@ import json
 import hmac
 import hashlib
 from urllib.parse import urljoin, urlencode
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import style
+import threading
 
 
 request = requests.get('https://api.bittrex.com/api/v1.1/public/getcurrencies')
@@ -72,8 +76,45 @@ else:
 
 if BinancePrice > BittrexPrice:
     difference = BinancePrice - BittrexPrice
-    print("The price is ", difference, "higher on Binance")
+    percent = difference / BittrexPrice * 100
+    print("The price is ", percent, "percent higher on Binance")
 else:
     difference = BittrexPrice - BinancePrice
-    print("The price is ", difference, "higher on Bittrex")
+    percent = difference / BinancePrice * 100
+    print("The price is ", percent, "percent higher on Bittrex")
 
+# Plot real time arbitrage opportunities between Binance and Bittrex
+
+arbitrageData = pd.DataFrame(columns=['% Difference'])
+
+def addData():
+    # Get current Time
+    ts = time.localtime()
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S", ts)
+    # Get Binance Price
+    r = requests.get(url, headers=headers, params=params)
+    BinancePrice = float(r.json()['price'])
+    # Get Bittrex Price
+    BtcEth = requests.get('https://api.bittrex.com/api/v1.1/public/getticker?market=BTC-ETH').json()
+    BittrexPrice = float(BtcEth['result']['Last'])
+    # Get percent difference
+    difference = (BittrexPrice - BinancePrice) / BinancePrice * 100
+    # Update Arbitrage Dataframe
+    arbitrageData.loc[current_time] = [difference]
+    threading.Timer(3.0, addData).start()
+    print(arbitrageData)
+
+
+addData()
+
+
+
+
+
+style.use('fivethirtyeight')
+
+fig = plt.figure()
+ax1 = fig.add_subplot(1, 1, 1)
+
+# def animate(i):
+#     graph_data =
