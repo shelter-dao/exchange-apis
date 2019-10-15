@@ -85,7 +85,7 @@ else:
 
 # Plot real time arbitrage opportunities between Binance and Bittrex
 
-arbitrageData = pd.DataFrame(columns=['% Difference'])
+arbitrageData = pd.DataFrame(columns=['BinancePrice', 'BittrexPrice','% Difference'])
 
 def addData():
     # Get current Time
@@ -100,7 +100,7 @@ def addData():
     # Get percent difference
     difference = (BittrexPrice - BinancePrice) / BinancePrice * 100
     # Update Arbitrage Dataframe
-    arbitrageData.loc[current_time] = [difference]
+    arbitrageData.loc[current_time] = [BinancePrice, BittrexPrice, difference]
     threading.Timer(3.0, addData).start()
     print(arbitrageData)
 
