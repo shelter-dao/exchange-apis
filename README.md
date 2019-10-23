@@ -1,4 +1,3 @@
-# BittrexConnection
+#Exchange API Libraries
 
-
-This is a test edit for Jupyter Notebook 
+Initial research in Jupyter Notebooks and Libraries for pulling data from various exchanges and performing common data manipulations on them 
