@@ -67,7 +67,8 @@ params = {
 
 url = urljoin(BASE_URL, PATH)
 r = requests.get(url, headers=headers, params=params)
-BinancePrice = float(r.json()['price'])
+BinancePrice = float(r.json()['pric'
+                              'e'])
 
 if r.status_code == 200:
     print("Price of last trade on Binance:", BinancePrice, "BTC/ETH")
