@@ -1,4 +1,4 @@
-import cbpro
+import cbpro as cbp
 import datetime as dt
 import numpy as np
 import pandas as pd
@@ -9,22 +9,34 @@ import requests
 product_id = 'BTC-USD'
 
 # set end to current time and iterate backwards to specified start
-start = dt.datetime(2019, 8, 1)
-end = dt.datetime.now()
-print(type(end))
+start = dt.datetime(2017, 9, 1)
+end = dt.datetime(2019, 9, 1)
+granularity = 86400
+temp_start = end - dt.timedelta(seconds=300*granularity)
 
 hist_data = []
 
-# while end != start:
-for x in [1,2,3]:
-    pc = cbpro.PublicClient()
-    print(end)
-    param_end = end.ToString('yyyy-mm-dd')
-    print(param_end)
-    new_data = pc.get_product_historic_rates(product_id, end=param_end, granularity=86400)
+while end > start:
+    pc = cbp.PublicClient()
+
+    if temp_start < start:
+        temp_start = start
+
+    new_data = pc.get_product_historic_rates(product_id, start=temp_start, end=end, granularity=granularity)
+
     hist_data.extend(new_data)
+
     end = dt.datetime.fromtimestamp(new_data[-1][0])
+    temp_start = end - dt.timedelta(seconds=300*granularity)
+
     print(end)
+    print(len(new_data))
+    print(len(hist_data))
     print('')
-    print(pc.session)
-    time.sleep(5)
+    pc.session.close()
+    time.sleep(1)
+
+print(hist_data[0:5])
+print('---')
+print(dt.datetime.fromtimestamp(hist_data[-1][0]))
+print(dt.datetime.fromtimestamp(hist_data[0][0]))
