@@ -36,7 +36,10 @@ while end > start:
     pc.session.close()
     time.sleep(1)
 
-print(hist_data[0:5])
+df = pd.DataFrame(hist_data)
+df.columns = ['time', 'low', 'high', 'open', 'close', 'volume']
+df.time = df.time.apply(lambda x: dt.datetime.fromtimestamp(x))
+print(df.iloc[:5])
 print('---')
-print(dt.datetime.fromtimestamp(hist_data[-1][0]))
-print(dt.datetime.fromtimestamp(hist_data[0][0]))
+print(df['time'].iloc[-1])
+print(df['time'].iloc[0])
