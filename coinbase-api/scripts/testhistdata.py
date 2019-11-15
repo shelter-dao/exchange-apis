@@ -3,6 +3,7 @@ import datetime as dt
 import numpy as np
 import pandas as pd
 import time
+import plotly.graph_objects as go
 import requests
 
 # initialize coinbase pro client with public functions
@@ -43,3 +44,13 @@ print(df.iloc[:5])
 print('---')
 print(df['time'].iloc[-1])
 print(df['time'].iloc[0])
+
+
+# Candlestick Graph
+fig = go.Figure(data=[go.Candlestick(x=df['time'],
+                open=df['open'],
+                high=df['high'],
+                low=df['low'],
+                close=df['close'])])
+
+fig.show()
