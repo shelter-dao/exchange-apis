@@ -11,7 +11,7 @@ class MyClient(Client):
 
     def on_message(self, message):
         dataFeed = pd.DataFrame(message, index=[len(message)])
-        print(dataFeed)
+        print(dataFeed.iloc[0])
 
 
 # ws = MyClient(loop, Channel('heartbeat', 'BTC-USD'))
