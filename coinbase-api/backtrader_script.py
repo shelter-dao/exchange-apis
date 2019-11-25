@@ -51,7 +51,7 @@ cerebro = bt.Cerebro()
 cerebro.addstrategy(TestStrategy)
 
 one_year = dt.timedelta(days=365)
-start = dt.datetime.now() - one_year*3
+start = dt.datetime.now() - one_year*2
 pipeline = CoinbasePipeline('BTC-USD',start=start)
 dataframe = pipeline.get_data()
 print(dataframe)
@@ -68,7 +68,10 @@ cerebro.addanalyzer(btanalyzers.DrawDown, _name='ddown')
 
 print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 thestrats = cerebro.run()
-print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
-print('Sharpe Ratio:', thestrats[0].analyzers.mysharpe.get_analysis()['sharperatio'] )
-print('Annual Return:',thestrats[0].analyzers.areturn.get_analysis() )
-print('Draw Down:',thestrats[0].analyzers.ddown.get_analysis() )
+print('\nFinal Portfolio Value: %.2f' % cerebro.broker.getvalue())
+print('\nSharpe Ratio:', thestrats[0].analyzers.mysharpe.get_analysis()['sharperatio'] )
+print('\n2018 Annual Return:',(thestrats[0].analyzers.areturn.get_analysis()[2018] * 100), '%' )
+print('\nDraw Down:\n',
+      '    Durration: ',thestrats[0].analyzers.ddown.get_analysis().get("len"),
+      '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
+      '    Dollars: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("moneydown"))
