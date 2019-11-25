@@ -6,8 +6,8 @@ import time
 import plotly.graph_objects as go
 import requests
 
-class DataAPI(object):
-    def __init__(self, product_id, start, end=dt.datetime.now(), granularity='86400'):
+class CoinbasePipeline(object):
+    def __init__(self, product_id, start, end=dt.datetime.now(), granularity=86400):
         self.product_id = product_id
         self.start = start
         self.end = end
@@ -18,20 +18,19 @@ class DataAPI(object):
         end = self.end
         granularity = self.granularity
         product_id = self.product_id
-
-        temp_start = end - dt.timedelta(seconds=300*granularity)
+        interval = 300 * granularity
+        x = dt.timedelta(seconds=interval)
+        temp_start = end - x
         hist_data = []
 
-        while end > start:
+        while end.date() > start.date():
             pc = cbp.PublicClient()
-
             if temp_start < start:
                 temp_start = start
 
             new_data = pc.get_product_historic_rates(product_id, start=temp_start, end=end, granularity=granularity)
 
             hist_data.extend(new_data)
-
             end = dt.datetime.fromtimestamp(new_data[-1][0])
             x = 300 * granularity
             delta = dt.timedelta(seconds=x)
@@ -39,21 +38,25 @@ class DataAPI(object):
             pc.session.close()
             time.sleep(1)
 
-        df = DataFrame(hist_data)
+        df = pd.DataFrame(hist_data)
         df.columns = ['datetime', 'low', 'high', 'open', 'close', 'volume']
-        df.time = df.time.apply(lambda x: dt.datetime.fromtimestamp(x))
+        print(df.datetime[0], type(df.datetime[0]))
+        df.datetime = df.datetime.apply(lambda x: dt.datetime.fromtimestamp(x))
+        print(df.datetime[0], type(df.datetime[0]))
+        # df.datetime = df.datetime.apply(lambda x: x.to_datetime())
+        # print(type(df.datetime[0]))
         return df
 
-one_year = dt.timedelta(days=365)
-start = dt.datetime.now() - one_year
-pipeline = DataAPI(product_id='BTC-USD', start=start)
-data = pipeline.get_data()
+# one_year = dt.timedelta(days=365)
+# start = dt.datetime.now() - one_year
+# pipeline = DataAPI(product_id='BTC-USD', start=start)
+# data = pipeline.get_data()
 
-print(data.iloc[:5])
-print('---')
-print(data['time'].iloc[-1])
-print(data['time'].iloc[0])
-
+# print(data.iloc[:5])
+# print('---')
+# print(data['datetime'].iloc[-1])
+# print(data['datetime'].iloc[0])
+#
 # # initialize coinbase pro client with public functions
 # product_id = 'BTC-USD'
 #
