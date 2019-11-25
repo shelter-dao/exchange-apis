@@ -40,10 +40,12 @@ class CoinbasePipeline(object):
 
         df = pd.DataFrame(hist_data)
         df.columns = ['datetime', 'low', 'high', 'open', 'close', 'volume']
-        print(df.datetime[0], type(df.datetime[0]))
         df.datetime = df.datetime.apply(lambda x: dt.datetime.fromtimestamp(x))
-        print(df.datetime[0], type(df.datetime[0]))
-        # df.datetime = df.datetime.apply(lambda x: x.to_datetime())
+        df.set_index('datetime', inplace=True, drop=True)
+        df.head()
+        # print(df.index)
+        # df.index = df.index.apply(lambda x: dt.datetime.fromtimestamp(x))
+        # print(df.datetime[0], type(df.datetime[0]))
         # print(type(df.datetime[0]))
         return df
 
