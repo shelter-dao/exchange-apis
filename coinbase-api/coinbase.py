@@ -42,11 +42,7 @@ class CoinbasePipeline(object):
         df.datetime = df.datetime.apply(lambda x: dt.datetime.fromtimestamp(x))
         df.set_index('datetime', inplace=True, drop=True)
         df = df.reindex(index=df.index[::-1])
-        df.head()
-        # print(df.index)
-        # df.index = df.index.apply(lambda x: dt.datetime.fromtimestamp(x))
-        # print(df.datetime[0], type(df.datetime[0]))
-        # print(type(df.datetime[0]))
+
         return df
 
     def candlestick_graph(self):
