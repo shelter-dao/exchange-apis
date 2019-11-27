@@ -18,22 +18,28 @@ class CoinbasePipeline(object):
         end = self.end
         granularity = self.granularity
         product_id = self.product_id
+
+        # default to the maximum of 300 api calls
         interval = 300 * granularity
-        x = dt.timedelta(seconds=interval)
-        temp_start = end - x
+        delta = dt.timedelta(seconds=interval)
+        #temp start is 300 bars back from defined end time
+        temp_start = end - delta
         hist_data = []
 
         while end.date() > start.date():
             pc = cbp.PublicClient()
+            # if defined timerange requires less than 300 calls, reset start time
             if temp_start < start:
                 temp_start = start
 
             new_data = pc.get_product_historic_rates(product_id, start=temp_start, end=end, granularity=granularity)
-
+            # append new data to historical data array
             hist_data.extend(new_data)
+            # re-evaluate end to the earliest value in retreived data (300 bars back)
             end = dt.datetime.fromtimestamp(new_data[-1][0])
-            x = 300 * granularity
-            delta = dt.timedelta(seconds=x)
+            interval = 300 * granularity
+            delta = dt.timedelta(seconds=interval)
+            # reset temp_start to be 300 bars back from new end value
             temp_start = end - delta
             pc.session.close()
             time.sleep(1)
@@ -49,62 +55,3 @@ class CoinbasePipeline(object):
         # print(df.datetime[0], type(df.datetime[0]))
         # print(type(df.datetime[0]))
         return df
-
-# one_year = dt.timedelta(days=365)
-# start = dt.datetime.now() - one_year
-# pipeline = DataAPI(product_id='BTC-USD', start=start)
-# data = pipeline.get_data()
-
-# print(data.iloc[:5])
-# print('---')
-# print(data['datetime'].iloc[-1])
-# print(data['datetime'].iloc[0])
-#
-# # initialize coinbase pro client with public functions
-# product_id = 'BTC-USD'
-#
-# # set end to current time and iterate backwards to specified start
-# start = dt.datetime(2017, 9, 1)
-# end = dt.datetime(2019, 9, 1)
-# granularity = 86400
-# temp_start = end - dt.timedelta(seconds=300*granularity)
-#
-# hist_data = []
-#
-# while end > start:
-#     pc = cbp.PublicClient()
-#
-#     if temp_start < start:
-#         temp_start = start
-#
-#     new_data = pc.get_product_historic_rates(product_id, start=temp_start, end=end, granularity=granularity)
-#
-#     hist_data.extend(new_data)
-#
-#     end = dt.datetime.fromtimestamp(new_data[-1][0])
-#     temp_start = end - dt.timedelta(seconds=300*granularity)
-#
-#     print(end)
-#     print(len(new_data))
-#     print(len(hist_data))
-#     print('')
-#     pc.session.close()
-#     time.sleep(1)
-#
-# df = pd.DataFrame(hist_data)
-# df.columns = ['datetime', 'low', 'high', 'open', 'close', 'volume']
-# df.time = df.time.apply(lambda x: dt.datetime.fromtimestamp(x))
-# print(df.iloc[:5])
-# print('---')
-# print(df['time'].iloc[-1])
-# print(df['time'].iloc[0])
-
-
-# # Candlestick Graph
-# fig = go.Figure(data=[go.Candlestick(x=df['time'],
-#                 open=df['open'],
-#                 high=df['high'],
-#                 low=df['low'],
-#                 close=df['close'])])
-#
-# fig.show()

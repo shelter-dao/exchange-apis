@@ -5,24 +5,12 @@ import backtrader.feeds as feeds
 import backtrader.indicators as btind
 import backtrader.analyzers as btanalyzers
 
-# class PandasData(feed.DataBase):
-#     params =(
-#         ('nocase', True),
-#         ('datetime', 0),
-#         ('open', -1),
-#         ('high', -1),
-#         ('low',-1),
-#         ('close', -1),
-#         ('volume', -1),
-#         ('openinterest', None),
-#     )
-#     print('classdefined')
 
 class TestStrategy(bt.Strategy):
 
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
-        dt = dt or self.datas[0].datetime.date(0)
+        dt = dt or self.datas[0].datetime.datetime(0)
         print('%s, %s' % (dt.isoformat(), txt))
 
     def __init__(self):
@@ -51,15 +39,16 @@ cerebro = bt.Cerebro()
 cerebro.addstrategy(TestStrategy)
 
 one_year = dt.timedelta(days=365)
-start = dt.datetime.now() - one_year*2
-pipeline = CoinbasePipeline('BTC-USD',start=start)
+days_100 = dt.timedelta(days=100)
+days_150 = dt.timedelta(days=150)
+days_30  = dt.timedelta(days=30)
+start = dt.datetime.now() - days_30
+pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=21600)
 dataframe = pipeline.get_data()
-print(dataframe)
-# print('.', dataframe['datetime'][0])
+
 
 
 data = feeds.PandasData(dataname=dataframe)
-print('data',data)
 cerebro.adddata(data)
 cerebro.broker.setcash(10000.00)
 cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='mysharpe')
@@ -70,7 +59,7 @@ print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 thestrats = cerebro.run()
 print('\nFinal Portfolio Value: %.2f' % cerebro.broker.getvalue())
 print('\nSharpe Ratio:', thestrats[0].analyzers.mysharpe.get_analysis()['sharperatio'] )
-print('\n2018 Annual Return:',(thestrats[0].analyzers.areturn.get_analysis()[2018] * 100), '%' )
+print('\n2018 Annual Return:',(thestrats[0].analyzers.areturn.get_analysis()[2019] * 100), '%' )
 print('\nDraw Down:\n',
       '    Durration: ',thestrats[0].analyzers.ddown.get_analysis().get("len"),
       '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
