@@ -15,6 +15,7 @@ class TestStrategy(bt.Strategy):
         self.sma = btind.SimpleMovingAverage(period=15)
 
         self.order = None
+        self.hist_change = []
 
     def next(self):
         # Simply log the closing price of the series from the reference

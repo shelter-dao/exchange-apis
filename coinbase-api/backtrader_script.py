@@ -38,3 +38,6 @@ print('\nDraw Down:\n',
       '    Durration: ',thestrats[0].analyzers.ddown.get_analysis().get("len"),
       '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
       '    Dollars: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("moneydown"))
+
+pipeline.change_graph()
+pipeline.candlestick_graph()

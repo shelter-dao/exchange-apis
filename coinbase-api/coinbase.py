@@ -4,6 +4,8 @@ import pandas as pd
 import time
 import plotly.graph_objects as go
 
+
+
 class CoinbasePipeline(object):
     def __init__(self, product_id, start, end=dt.datetime.now(), granularity=86400):
         self.product_id = product_id
@@ -45,17 +47,21 @@ class CoinbasePipeline(object):
         df = pd.DataFrame(hist_data)
         df.columns = ['datetime', 'low', 'high', 'open', 'close', 'volume']
         df.datetime = df.datetime.apply(lambda x: dt.datetime.fromtimestamp(x))
+        df['change'] = df.apply(lambda row: ((row['close'] - row['open'])/row['open'] * 100), axis=1 )
         df.set_index('datetime', inplace=True, drop=True)
         df = df.reindex(index=df.index[::-1])
-
         return df
 
-    def candlestick_graph(self):
-        df = self.get_data()
+    def candlestick_graph(self, df=None):
+        df = df or self.get_data()
         fig = go.Figure(data=[go.Candlestick(x=df.index,
                         open=df['open'],
                         high=df['high'],
                         low=df['low'],
                         close=df['close'])])
 
+        fig.show()
+    def change_graph(self, df=None):
+        df = df or self.get_data()
+        fig = go.Figure(data=go.Scatter(x=df.index, y=df.change))
         fig.show()
