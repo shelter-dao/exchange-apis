@@ -1,10 +1,8 @@
 import cbpro as cbp
 import datetime as dt
-import numpy as np
 import pandas as pd
 import time
 import plotly.graph_objects as go
-import requests
 
 class CoinbasePipeline(object):
     def __init__(self, product_id, start, end=dt.datetime.now(), granularity=86400):
@@ -49,9 +47,15 @@ class CoinbasePipeline(object):
         df.datetime = df.datetime.apply(lambda x: dt.datetime.fromtimestamp(x))
         df.set_index('datetime', inplace=True, drop=True)
         df = df.reindex(index=df.index[::-1])
-        df.head()
-        # print(df.index)
-        # df.index = df.index.apply(lambda x: dt.datetime.fromtimestamp(x))
-        # print(df.datetime[0], type(df.datetime[0]))
-        # print(type(df.datetime[0]))
+
         return df
+
+    def candlestick_graph(self):
+        df = self.get_data()
+        fig = go.Figure(data=[go.Candlestick(x=df.index,
+                        open=df['open'],
+                        high=df['high'],
+                        low=df['low'],
+                        close=df['close'])])
+
+        fig.show()

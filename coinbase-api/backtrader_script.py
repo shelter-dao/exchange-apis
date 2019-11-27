@@ -1,4 +1,6 @@
 from coinbase import CoinbasePipeline
+from strategy import TestStrategy
+
 import datetime as dt
 import backtrader as bt
 import backtrader.feeds as feeds
@@ -6,37 +8,11 @@ import backtrader.indicators as btind
 import backtrader.analyzers as btanalyzers
 
 
-class TestStrategy(bt.Strategy):
-
-    def log(self, txt, dt=None):
-        ''' Logging function for this strategy'''
-        dt = dt or self.datas[0].datetime.datetime(0)
-        print('%s, %s' % (dt.isoformat(), txt))
-
-    def __init__(self):
-        # Keep a reference to the "close" line in the data[0] dataseries
-        self.dataclose = self.datas[0].close
-        self.sma = btind.SimpleMovingAverage(period=15)
-
-        self.order = None
-
-    def next(self):
-        # Simply log the closing price of the series from the reference
-        self.log('Close, %.5f' % self.dataclose[0])
-        if self.sma > self.dataclose:
-            self.order = self.buy(data=self.datas[0], size=1, exectype=None)
-            print("BUY ORDER")
-            pass
-        elif   self.sma < self.dataclose:
-            #do something here
-            pass
-
-
-
+strategy = TestStrategy
 
 cerebro = bt.Cerebro()
 
-cerebro.addstrategy(TestStrategy)
+cerebro.addstrategy(strategy)
 
 one_year = dt.timedelta(days=365)
 days_100 = dt.timedelta(days=100)
@@ -45,8 +21,6 @@ days_30  = dt.timedelta(days=30)
 start = dt.datetime.now() - days_30
 pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=21600)
 dataframe = pipeline.get_data()
-
-
 
 data = feeds.PandasData(dataname=dataframe)
 cerebro.adddata(data)
