@@ -49,7 +49,7 @@ class CoinbasePipeline(object):
         df.datetime = df.datetime.apply(lambda x: dt.datetime.fromtimestamp(x))
         df['change'] = df.apply(lambda row: ((row['close'] - row['open'])/row['open'] * 100), axis=1 )
         df.set_index('datetime', inplace=True, drop=True)
-        df = df.reindex(index=df.index[::-1])
+        df = df.iloc[::-1]
         return df
 
     def candlestick_graph(self, df=None):
