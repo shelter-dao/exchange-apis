@@ -19,7 +19,7 @@ days_100 = dt.timedelta(days=100)
 days_150 = dt.timedelta(days=150)
 days_30  = dt.timedelta(days=30)
 start = dt.datetime.now() - days_30
-pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=21600)
+pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
 dataframe = pipeline.get_data()
 
 data = feeds.PandasData(dataname=dataframe)

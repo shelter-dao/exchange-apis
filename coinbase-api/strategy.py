@@ -13,7 +13,7 @@ class TestStrategy(bt.Strategy):
         # Keep a reference to the "close" line in the data[0] dataseries
         self.dataclose = self.datas[0].close
         self.sma = btind.SimpleMovingAverage(period=15)
-
+        print(self.datas[0])
         self.order = None
         self.hist_change = []
 
