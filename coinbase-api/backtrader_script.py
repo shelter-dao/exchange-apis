@@ -1,5 +1,5 @@
 from coinbase import CoinbasePipeline
-from strategy import TestStrategy
+from sma_golden_cross import SMAGoldenCross
 
 import datetime as dt
 import backtrader as bt
@@ -8,7 +8,7 @@ import backtrader.indicators as btind
 import backtrader.analyzers as btanalyzers
 
 
-strategy = TestStrategy
+strategy = SMAGoldenCross
 
 cerebro = bt.Cerebro()
 
