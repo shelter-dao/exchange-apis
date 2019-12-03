@@ -18,8 +18,8 @@ one_year = dt.timedelta(days=365)
 days_100 = dt.timedelta(days=100)
 days_150 = dt.timedelta(days=150)
 days_30  = dt.timedelta(days=30)
-start = dt.datetime.now() - days_30
-pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
+start = dt.datetime.now() - one_year
+pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=86400)
 dataframe = pipeline.get_data()
 
 data = feeds.PandasData(dataname=dataframe)
@@ -33,7 +33,7 @@ print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 thestrats = cerebro.run()
 print('\nFinal Portfolio Value: %.2f' % cerebro.broker.getvalue())
 print('\nSharpe Ratio:', thestrats[0].analyzers.mysharpe.get_analysis()['sharperatio'] )
-print('\n2018 Annual Return:',(thestrats[0].analyzers.areturn.get_analysis()[2019] * 100), '%' )
+print('\n2019 Annual Return:',(thestrats[0].analyzers.areturn.get_analysis()[2019] * 100), '%' )
 print('\nDraw Down:\n',
       '    Durration: ',thestrats[0].analyzers.ddown.get_analysis().get("len"),
       '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
