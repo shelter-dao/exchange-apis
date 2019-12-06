@@ -23,4 +23,13 @@ class SMAGoldenCross(bt.SignalStrategy):
         # used to determine if order has executed
         self.order = None
         # self.signal_add(bt.SIGNAL_LONG, bt.ind.CrossOver(sma_12hr, sma_30day))
-        print(bt.ind.CrossOver(sma_12hr,sma_30day))
+        self.result = btind.CrossOver(sma_12hr, sma_30day)
+
+    def next(self):
+
+
+        if self.result > 0:
+            print("Positive CrossOver")
+            self.order = self.buy()
+        if self.result < 0:
+            print("Negative CrossOver")
