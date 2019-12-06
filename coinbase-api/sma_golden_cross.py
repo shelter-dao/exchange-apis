@@ -4,7 +4,7 @@ import backtrader.indicators as btind
 
 class SMAGoldenCross(bt.SignalStrategy):
 
-    params = (('pfast', 12), ('pslow',240),)
+    params = (('pfast', 12), ('pslow',60),)
     # def log(self, txt, dt=None):
     #     ''' Logging function for this strategy'''
     #     dt = dt or self.datas[0].datetime.date(0)
@@ -26,7 +26,6 @@ class SMAGoldenCross(bt.SignalStrategy):
         self.result = btind.CrossOver(sma_12hr, sma_30day)
 
     def next(self):
-
 
         if self.result > 0:
             print("Positive CrossOver")
