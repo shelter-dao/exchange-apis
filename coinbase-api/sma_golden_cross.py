@@ -12,17 +12,18 @@ class SMAGoldenCross(bt.SignalStrategy):
 
     def __init__(self):
         # 12 hour sma
-        sma_12hr = btind.SimpleMovingAverage(period=self.p.pfast)
+        self.sma_12hr = btind.SimpleMovingAverage(period=self.p.pfast)
         # 30 day sma
-        sma_30day = btind.SimpleMovingAverage(period=self.p.pslow)
+        self.sma_30day = btind.SimpleMovingAverage(period=self.p.pslow)
+        self.result = btind.CrossOver(self.sma_12hr, self.sma_30day) > 0
         # used to determine if order has executed
         self.order = None
         # self.signal_add(bt.SIGNAL_LONG, bt.ind.CrossOver(sma_12hr, sma_30day))
-        self.result = btind.CrossOver(sma_12hr, sma_30day)
 
         self.dataclose = self.datas[0].close
 
     def notify_order(self, order):
+
         if order.status in [order.Submitted, order.Accepted]:
             # Buy/Sell order submitted/accepted to/by broker - Nothing to do
             return
@@ -55,24 +56,27 @@ class SMAGoldenCross(bt.SignalStrategy):
 
 
     def next(self):
+        if self.result != None:
+            if self.result :
+                print("Positive CrossOverf" )
+                print(self.result)
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.order = self.buy()
 
-        if self.result > 0:
-            print("Positive CrossOver")
-            self.log('BUY CREATE, %.2f' % self.dataclose[0])
-            self.order = self.buy()
-        if self.result < 0:
-            print("Negative CrossOver")
-            if self.position:
-                self.log('SELL CREATE, %.2f' % self.dataclose[0])
-                self.log('Current position size:, %.2f' % self.position.size)
-                self.order = self.sell()
-
-        # if current bar is 7% higher than executed bar, SELL
-        if self.position.size > 0:
-            sell_percent = 1.07
-            sell_price = sell_percent * self.order.executed.price
-            # difference = self.bar_executed - len(self)
-            if self.dataclose[0] >= sell_price:
-                self.log('High SELL CREATE, %.2f' % self.dataclose[0])
-                self.log('Current position size:, %.2f' % self.position.size)
-                self.order = self.sell()
+            # if current bar is 7% higher than executed bar, SELL
+            if self.position.size > 0:
+                sell_percent = 1.07
+                sell_price = sell_percent * self.order.executed.price
+                # difference = self.bar_executed - len(self)
+                if self.dataclose[0] >= sell_price:
+                    self.log('High SELL CREATE, %.2f' % self.dataclose[0])
+                    self.log('Current position size:, %.2f' % self.position.size)
+                    self.order = self.sell()
+                else:
+                    if not self.result:
+                        print("Negative CrossOver")
+                        print(self.result)
+                        if self.position:
+                            self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                            self.log('Current position size:, %.2f' % self.position.size)
+                            self.order = self.sell()
