@@ -22,7 +22,6 @@ class SMAGoldenCross(bt.SignalStrategy):
 
         self.dataclose = self.datas[0].close
 
-
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
             # Buy/Sell order submitted/accepted to/by broker - Nothing to do
@@ -33,18 +32,18 @@ class SMAGoldenCross(bt.SignalStrategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 self.log(
-                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
                     (order.executed.price,
                      order.executed.value,
-                     order.executed.comm))
+                     self.position.size))
 
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
             else:  # Sell
-                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
                          (order.executed.price,
                           order.executed.value,
-                          order.executed.comm))
+                          self.position.size))
 
             self.bar_executed = len(self)
 
@@ -65,13 +64,15 @@ class SMAGoldenCross(bt.SignalStrategy):
             print("Negative CrossOver")
             if self.position:
                 self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.log('Current position size:, %.2f' % self.position.size)
                 self.order = self.sell()
 
         # if current bar is 7% higher than executed bar, SELL
-        if self.position:
+        if self.position.size > 0:
             sell_percent = 1.07
             sell_price = sell_percent * self.order.executed.price
-            difference = self.bar_executed - len(self)
+            # difference = self.bar_executed - len(self)
             if self.dataclose[0] >= sell_price:
                 self.log('High SELL CREATE, %.2f' % self.dataclose[0])
+                self.log('Current position size:, %.2f' % self.position.size)
                 self.order = self.sell()
