@@ -3,7 +3,7 @@ import backtrader as bt
 import backtrader.indicators as btind
 
 class SMAGoldenCross(bt.SignalStrategy):
-
+    print("In strategy")
     params = (('pfast', 28), ('pslow', 60),)
 
     def log(self, txt, dt=None):
@@ -12,6 +12,7 @@ class SMAGoldenCross(bt.SignalStrategy):
         print('%s, %s' % (dt.isoformat(), txt))
 
     def __init__(self):
+        print("inInit")
         # 12 hour sma
         self.sma_12hr = btind.SimpleMovingAverage(period=self.p.pfast)
         # 30 day sma
@@ -41,7 +42,6 @@ class SMAGoldenCross(bt.SignalStrategy):
 
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
-                self.order = order
             else:  # Sell
                 self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
                          (order.executed.price,
