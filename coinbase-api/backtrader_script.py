@@ -1,6 +1,7 @@
 from coinbase import CoinbasePipeline
 from sma_golden_cross import SMAGoldenCross
 
+
 import datetime as dt
 import backtrader as bt
 import backtrader.feeds as feeds
@@ -19,15 +20,15 @@ if __name__ == '__main__':
     days_150 = dt.timedelta(days=150)
     days_30  = dt.timedelta(days=30)
     month_6  = dt.timedelta(days=180)
-    start = dt.datetime.now() - month_6
+    start = dt.datetime.now() - days_150
     pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
     dataframe = pipeline.get_data()
 
     data = feeds.PandasData(dataname=dataframe)
     cerebro.adddata(data)
-    cerebro.broker.setcash(10000.00)
-    SharpeRatioDay = btanalyzers.SharpeRatio(timeframe=bt.TimeFrame.Days)
-    cerebro.addanalyzer(SharpeRatioDay, _name='mysharpe')
+    cerebro.broker.setcash(100000.00)
+    SharpeRatioDay = bt.analyzers.SharpeRatio
+    cerebro.addanalyzer(SharpeRatioDay, _name='mysharpe',timeframe=bt.TimeFrame.Days)
     cerebro.addanalyzer(btanalyzers.AnnualReturn, _name='areturn')
     cerebro.addanalyzer(btanalyzers.DrawDown, _name='ddown')
 
@@ -41,5 +42,7 @@ if __name__ == '__main__':
           '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
           '    Dollars: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("moneydown"))
 
-    pipeline.change_graph()
-    pipeline.candlestick_graph()
+    cerebro.plot()
+
+    # pipeline.change_graph()
+    # pipeline.candlestick_graph()
