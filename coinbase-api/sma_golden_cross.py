@@ -5,6 +5,7 @@ import backtrader.indicators as btind
 class SMAGoldenCross(bt.SignalStrategy):
 
     params = (('pfast', 28), ('pslow', 60),)
+
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
         dt = dt or self.datas[0].datetime.date(0)
@@ -40,6 +41,7 @@ class SMAGoldenCross(bt.SignalStrategy):
 
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
+                self.order = order
             else:  # Sell
                 self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
                          (order.executed.price,
@@ -79,3 +81,7 @@ class SMAGoldenCross(bt.SignalStrategy):
                 #             self.log('SELL CREATE, %.2f' % self.dataclose[0])
                 #             self.log('Current position size:, %.2f' % self.position.size)
                 #             self.order = self.sell()
+    def stop(self):
+        pnl = round(self.broker.getvalue() - 100000,2)
+        print('pfast: {} pslow: {} Final PnL: {}'.format(
+            self.params.pfast, self.params.pslow, pnl))
