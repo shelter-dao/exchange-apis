@@ -4,7 +4,7 @@ import backtrader.indicators as btind
 
 class SMAGoldenCross(bt.SignalStrategy):
 
-    params = (('pfast', 4), ('pslow',12),)
+    params = (('pfast', 28), ('pslow', 60),)
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
         dt = dt or self.datas[0].datetime.date(0)
@@ -15,8 +15,7 @@ class SMAGoldenCross(bt.SignalStrategy):
         self.sma_12hr = btind.SimpleMovingAverage(period=self.p.pfast)
         # 30 day sma
         self.sma_30day = btind.SimpleMovingAverage(period=self.p.pslow)
-        self.positiveCross = btind.CrossOver(self.sma_12hr, self.sma_30day) > 0
-        self.negativeCross = btind.CrossOver(self.sma_12hr, self.sma_30day) < 0
+        self.gsma = btind.CrossOver(self.sma_12hr, self.sma_30day)
         # used to determine if order has executed
         self.order = None
         # self.signal_add(bt.SIGNAL_LONG, bt.ind.CrossOver(sma_12hr, sma_30day))
@@ -54,7 +53,7 @@ class SMAGoldenCross(bt.SignalStrategy):
 
 
     def next(self):
-        if self.positiveCross:
+        if self.gsma > 0:
             print("Positive CrossOverf" )
             self.log('BUY CREATE, %.2f' % self.dataclose[0])
             self.order = self.buy()
@@ -63,7 +62,7 @@ class SMAGoldenCross(bt.SignalStrategy):
         # if current bar is 7% higher than executed bar, SELL
         else:
             if self.position.size > 0:
-                sell_percent = 1.3
+                sell_percent = 1.05
                 sell_price = sell_percent * self.order.executed.price
                 # difference = self.bar_executed - len(self)
                 if self.dataclose[0] >= sell_price:
