@@ -3,7 +3,7 @@ import backtrader as bt
 import backtrader.indicators as btind
 
 class SMAGoldenCross(bt.SignalStrategy):
-    params = (('pfast', 4), ('pslow', 30),)
+    params = (('pfast', 15), ('pslow', 14),)
 
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
@@ -22,34 +22,34 @@ class SMAGoldenCross(bt.SignalStrategy):
 
         self.dataclose = self.datas[0].close
 
-    # def notify_order(self, order):
-    #
-    #     if order.status in [order.Submitted, order.Accepted]:
-    #         # Buy/Sell order submitted/accepted to/by broker - Nothing to do
-    #         return
-    #
-    #     # Check if an order has been completed
-    #     # Attention: broker could reject order if not enough cash
-    #     if order.status in [order.Completed]:
-    #         if order.isbuy():
-    #             # self.log(
-    #                 # 'BUY EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
-    #                 # (order.executed.price,
-    #                 #  order.executed.value,
-    #                 #  self.position.size))
-    #
-    #             self.buyprice = order.executed.price
-    #             self.buycomm = order.executed.comm
-    #         # else:  # Sell
-    #             # # self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
-    #             #          (order.executed.price,
-    #             #           order.executed.value,
-    #             #           self.position.size))
-    #
-    #         self.bar_executed = len(self)
-    #
-    #     elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-    #         # self.log('Order Canceled/Margin/Rejected')
+    def notify_order(self, order):
+
+        if order.status in [order.Submitted, order.Accepted]:
+            # Buy/Sell order submitted/accepted to/by broker - Nothing to do
+            return
+
+        # Check if an order has been completed
+        # Attention: broker could reject order if not enough cash
+        if order.status in [order.Completed]:
+            if order.isbuy():
+                # self.log(
+                #     'BUY EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
+                #     (order.executed.price,
+                #      order.executed.value,
+                #      self.position.size))
+
+                self.buyprice = order.executed.price
+                self.buycomm = order.executed.comm
+            # else:  # Sell
+            #      self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Position: %.2f' %
+            #              (order.executed.price,
+            #               order.executed.value,
+            #               self.position.size))
+
+            self.bar_executed = len(self)
+
+        # elif order.status in [order.Canceled, order.Margin, order.Rejected]:
+            # self.log('Order Canceled/Margin/Rejected')
 
 
     def next(self):
@@ -57,8 +57,6 @@ class SMAGoldenCross(bt.SignalStrategy):
             # print("Positive CrossOverf" )
             # self.log('BUY CREATE, %.2f' % self.dataclose[0])
             self.order = self.buy()
-            # print(self.result == True)
-            # print(len(self))
         # if current bar is 7% higher than executed bar, SELL
         else:
             if self.position.size > 0:
@@ -70,15 +68,7 @@ class SMAGoldenCross(bt.SignalStrategy):
                     # self.log('Current position size:, %.2f' % self.position.size)
                     # print(self.dataclose[0])
                     self.order = self.sell()
-                # else:
-                #     if self.negativeCross:
-                # #         print("Negative CrossOver")
-                # #         # print(self.result !=True)
-                # #         print(len(self))
-                #         if self.position:
-                # #             self.log('SELL CREATE, %.2f' % self.dataclose[0])
-                # #             self.log('Current position size:, %.2f' % self.position.size)
-                #             self.order = self.sell()
+
     def stop(self):
         pnl = round(self.broker.getvalue() - 100000,2)
         print('pfast: {} pslow: {} Final PnL: {}'.format(
