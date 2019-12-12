@@ -35,18 +35,18 @@ class MeanReversion(bt.SignalStrategy):
 
     def next(self):
         # Log closing price
-        self.log('Close, %.2f' % self.close[0])
 
         if self.order:
+            self.log('Current Order, %', self.order)
             return
-
-        if not self.position:   # no position
-            if self.close < self.boll.lines.bot:
-                # execute buy with stop order price set to  bollinger band
-                self.buy(exectype=bt.Order.Stop, price=self.boll.lines.bot[0])
-                print('BUY, %.2f' % self.close[0])
-        else:   # have position
-            # if our position is a buy, place a sell limit order at the bollinger band mid line
-            if self.position.size > 0:
-                self.sell(exectype=bt.Order.Limit, price=self.boll.lines.mid[0], size=self.p.size)
-                print('SELL, %.2f' % self.close[0])
+        else:
+            if not self.position:   # no position
+                if self.close < self.boll.lines.bot:
+                    # execute buy with stop order price set to  bollinger band
+                    self.buy(exectype=bt.Order.Stop, price=self.boll.lines.bot[0])
+                    self.log('BUY CREATE, %.2f' % self.close[0])
+            else:   # have position
+                # if our position is a buy, place a sell limit order at the bollinger band mid line
+                if self.position.size > 0:
+                    self.log('SELL CREATE, %.2f' % self.close[0])
+                    self.sell(exectype=bt.Order.Limit, price=self.boll.lines.mid[0])
