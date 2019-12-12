@@ -3,7 +3,7 @@ import backtrader as bt
 import backtrader.indicators as btind
 
 class SMAGoldenCross(bt.SignalStrategy):
-    params = (('pfast', 15), ('pslow', 14),)
+    params = (('pfast', 32), ('pslow', 170),)
 
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
