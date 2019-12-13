@@ -8,6 +8,8 @@ import backtrader.feeds as feeds
 import backtrader.indicators as btind
 import backtrader.analyzers as btanalyzers
 
+import matplotlib
+
 if __name__ == '__main__':
     strategy = MeanReversion
     startcash = 100000
@@ -22,7 +24,7 @@ if __name__ == '__main__':
     days_30  = dt.timedelta(days=30)
     month_6  = dt.timedelta(days=180)
     start = dt.datetime.now() - days_30
-    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=21600)
+    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
     dataframe = pipeline.get_data()
 
     data = feeds.PandasData(dataname=dataframe)
