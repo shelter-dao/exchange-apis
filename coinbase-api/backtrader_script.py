@@ -23,13 +23,14 @@ if __name__ == '__main__':
     days_150 = dt.timedelta(days=150)
     days_30  = dt.timedelta(days=30)
     month_6  = dt.timedelta(days=180)
-    start = dt.datetime.now() - days_30
-    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
+    start = dt.datetime.now() - days_100
+    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=900)
     dataframe = pipeline.get_data()
 
     data = feeds.PandasData(dataname=dataframe)
     cerebro.adddata(data)
     cerebro.broker.setcash(startcash)
+    cerebro.broker.setcommission(commission=0.005)
     SharpeRatioDay = bt.analyzers.SharpeRatio
     cerebro.addanalyzer(SharpeRatioDay, _name='mysharpe',timeframe=bt.TimeFrame.Days)
     cerebro.addanalyzer(btanalyzers.AnnualReturn, _name='areturn')

@@ -15,8 +15,8 @@ class MeanReversion(bt.SignalStrategy):
     '''
 
     params = (
-        ("period", 2),
-        ("devfactor", 21),
+        ("period", 82),
+        ("devfactor", 1),
         ("size", 20),
         ("expiration", 2)
     )
@@ -105,12 +105,12 @@ class MeanReversion(bt.SignalStrategy):
                 if self.position.size > 0:
                     # self.log('SELL CREATE, %.2f' % self.close[0])
                     self.order = self.sell(exectype=bt.Order.Limit,
-                                           price=self.boll.lines.mid[0],
+                                           price=self.boll.lines.top[0],
                                            valid=bt.Order.DAY)
 
     def stop(self):
         self.value = round(self.broker.get_value(), 2)
-    #     pnl = round(self.broker.getvalue() - 100000,5)
-    #     print(self.broker.getvalue())
-    #     print('period: {} devfactor: {} Final PnL: {}'.format(
-    #         self.params.period, self.params.devfactor, pnl))
+        # pnl = round(self.broker.getvalue() - 100000,5)
+        # print(self.broker.getvalue())
+        # print('period: {} devfactor: {} Final PnL: {}'.format(
+        #     self.params.period, self.params.devfactor, pnl))
