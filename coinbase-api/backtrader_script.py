@@ -47,7 +47,7 @@ if __name__ == '__main__':
           '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
           '    Dollars: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("moneydown"))
 
-    # cerebro.plot()
+    cerebro.plot()
 
     # pipeline.change_graph()
     # pipeline.candlestick_graph()
