@@ -24,7 +24,7 @@ if __name__ == '__main__':
     days_30  = dt.timedelta(days=30)
     month_6  = dt.timedelta(days=180)
     start = dt.datetime.now() - days_100
-    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=900)
+    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
     dataframe = pipeline.get_data()
 
     data = feeds.PandasData(dataname=dataframe)
