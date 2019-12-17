@@ -15,8 +15,8 @@ class MeanReversion(bt.SignalStrategy):
     '''
 
     params = (
-        ("period", 37),
-        ("devfactor", 10),
+        ("period", 32),
+        ("devfactor", 26),
         ("size", 20),
         ("expiration", 2),
         ("sell_margin", 1.02)

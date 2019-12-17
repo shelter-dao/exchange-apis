@@ -3,6 +3,7 @@ from sma_golden_cross import SMAGoldenCross
 from mean_reversion import MeanReversion
 
 import datetime as dt
+import pandas as pd
 import backtrader as bt
 import backtrader.feeds as feeds
 import backtrader.indicators as btind
@@ -11,21 +12,26 @@ import backtrader.analyzers as btanalyzers
 import matplotlib
 
 if __name__ == '__main__':
+    startTime = dt.datetime.now()
     strategy = MeanReversion
-    startcash = 100000
-
+    startcash = 10 #BTC
     cerebro = bt.Cerebro(runonce=False, optreturn=False)
-
     cerebro.addstrategy(strategy)
 
-    one_year = dt.timedelta(days=365)
-    days_100 = dt.timedelta(days=100)
-    days_150 = dt.timedelta(days=150)
-    days_30  = dt.timedelta(days=30)
-    month_6  = dt.timedelta(days=180)
-    start = dt.datetime.now() - days_100
-    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
-    dataframe = pipeline.get_data()
+ # Used when you don't have the csv data and need to pull from the internet
+ #    one_year = dt.timedelta(days=365)
+ #    days_100 = dt.timedelta(days=100)
+ #    days_150 = dt.timedelta(days=150)
+ #    days_30  = dt.timedelta(days=30)
+ #    month_6  = dt.timedelta(days=180)
+ #    start = dt.datetime.now() - days_100
+ #    pipeline = CoinbasePipeline('BTC-USD',start=start, granularity=3600)
+ #    dataframe = pipeline.get_data()
+ #
+    dataframe = pd.read_csv("./hist-data/ETH-BTC-100d-1hr-12-16.csv",
+                            index_col="datetime",
+                            parse_dates=['datetime'])
+
 
     data = feeds.PandasData(dataname=dataframe)
     cerebro.adddata(data)
@@ -47,6 +53,9 @@ if __name__ == '__main__':
           '    Duration: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("len"),
           '    Percent: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("drawdown"), "%",
           '    Dollars: %.2f' % thestrats[0].analyzers.ddown.get_analysis().get("moneydown"))
+
+    totalTime = dt.datetime.now() - startTime
+    print('Processing Time:{}'.format(totalTime))
 
     cerebro.plot()
 
